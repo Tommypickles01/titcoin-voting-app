@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Titcoin Image Voting</title>
+  <title>Titcoin Tier Voting</title>
   <style>
     body {
       font-family: sans-serif;
-      background: url('https://i.imgur.com/ys9YkZU.jpeg') no-repeat center center fixed;
-      background-size: cover;
+      background: #000; /* Sleek black background */
       color: #fff;
       margin: 0;
       padding: 0;
@@ -23,14 +22,27 @@
       width: 80px;
       margin-top: 10px;
     }
+    .tier-section {
+      margin: 30px 20px;
+    }
+    .tier-section h2 {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .S { color: gold; }
+    .A { color: #00ffcc; }
+    .B { color: #33cc33; }
+    .C { color: #99ccff; }
+    .D { color: #ff9966; }
+    .E { color: gray; }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
-      padding: 16px;
     }
     .card {
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(20, 20, 20, 0.95);
       padding: 10px;
       border-radius: 10px;
       text-align: center;
@@ -39,12 +51,10 @@
     }
     .card:hover {
       transform: scale(1.05) rotate(1deg);
-      background: rgba(0, 0, 0, 0.95);
+      background: rgba(40, 40, 40, 1);
     }
     .card:hover .tier-S {
       box-shadow: 0 0 15px gold;
-      border-radius: 5px;
-      padding: 2px;
     }
     img {
       max-width: 100%;
@@ -59,21 +69,10 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .tier {
-      font-size: 1.2em;
-      margin-top: 4px;
-      font-weight: bold;
-    }
-    .tier-S { color: gold; }
-    .tier-A { color: #00ffcc; }
-    .tier-B { color: #33cc33; }
-    .tier-C { color: #99ccff; }
-    .tier-D { color: #ff9966; }
-    .tier-E { color: gray; }
     .leaderboard {
       text-align: center;
       padding: 20px;
-      background: rgba(28, 28, 28, 0.9);
+      background: rgba(28, 28, 28, 0.95);
     }
     .leaderboard h2 {
       margin-bottom: 10px;
@@ -89,19 +88,20 @@
 </head>
 <body>
   <img src="https://files.catbox.moe/uqu90p.png" class="logo" alt="Titcoin Logo" />
-  <h1>🔥 Vote Your Favorite Titcoin Image 🔥</h1>
+  <h1>🔥 Vote for Your Favorite Titcoin Image 🔥</h1>
+
   <div class="leaderboard">
     <h2>📈 Live Leaderboard</h2>
     <ol id="leaderboardList"></ol>
   </div>
-  <div class="grid" id="imageGrid"></div>
+
+  <div id="tiersContainer"></div>
 
   <script>
     async function fetchImages() {
       const res = await fetch('https://titcoin-voting-app.onrender.com/images');
       let data = await res.json();
 
-      // Force tier spread for small sets
       if (data.length < 6) {
         data.sort((a, b) => b.votes - a.votes);
         data.forEach((img, i) => {
@@ -114,26 +114,35 @@
         });
       }
 
-      // Sort images by vote count
       data.sort((a, b) => b.votes - a.votes);
 
-      // Image grid
-      const grid = document.getElementById('imageGrid');
-      grid.innerHTML = '';
-      data.forEach(img => {
-        const tierClass = `tier tier-${img.tier}`;
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <img src="${img.url}" alt="titcoin image" />
-          <div class="${tierClass}">Tier: ${img.tier}</div>
-          <div>Votes: ${img.votes}</div>
-          <button onclick="vote('${img.id}')">Vote</button>
-        `;
-        grid.appendChild(card);
+      const tiers = ['S', 'A', 'B', 'C', 'D', 'E'];
+      const container = document.getElementById('tiersContainer');
+      container.innerHTML = '';
+
+      tiers.forEach(tier => {
+        const tierData = data.filter(img => img.tier === tier);
+        if (tierData.length === 0) return;
+
+        const section = document.createElement('div');
+        section.className = 'tier-section';
+        section.innerHTML = `<h2 class="${tier}">${tier} Tier</h2><div class="grid"></div>`;
+        const grid = section.querySelector('.grid');
+
+        tierData.forEach(img => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <img src="${img.url}" alt="image" />
+            <div>Votes: ${img.votes}</div>
+            <button onclick="vote('${img.id}')">Vote</button>
+          `;
+          grid.appendChild(card);
+        });
+
+        container.appendChild(section);
       });
 
-      // Leaderboard
       const leaderboard = document.getElementById('leaderboardList');
       leaderboard.innerHTML = '';
       data.slice(0, 10).forEach(img => {
