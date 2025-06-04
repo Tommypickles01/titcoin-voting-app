@@ -5,54 +5,130 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Titcoin Image Voting</title>
   <style>
-    body { font-family: sans-serif; background: #111; color: #fff; margin: 0; padding: 0; }
-    h1 { text-align: center; margin-top: 1em; }
-    .logo { width: 60px; height: 60px; border-radius: 50%; display: block; margin: 10px auto; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; padding: 16px; }
-    .card { background: #222; padding: 10px; border-radius: 10px; text-align: center; }
-    img { max-width: 100%; border-radius: 8px; }
-    button { margin-top: 8px; background: orange; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
-    .tier { font-size: 1.2em; margin-top: 4px; }
-    .wallet-btn { display: block; margin: 10px auto; background: #444; color: #fff; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; }
+    body {
+      font-family: sans-serif;
+      background: url('https://i.imgur.com/ys9YkZU.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto;
+      width: 80px;
+      margin-top: 10px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      padding: 16px;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 8px;
+      background: orange;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .tier {
+      font-size: 1.2em;
+      margin-top: 4px;
+      font-weight: bold;
+    }
+    .tier-S { color: gold; }
+    .tier-A { color: #00ffcc; }
+    .tier-B { color: #33cc33; }
+    .tier-C { color: #99ccff; }
+    .tier-D { color: #ff9966; }
+    .tier-E { color: gray; }
+    .leaderboard {
+      text-align: center;
+      padding: 20px;
+      background: rgba(28, 28, 28, 0.9);
+    }
+    .leaderboard h2 {
+      margin-bottom: 10px;
+    }
+    .leaderboard ol {
+      list-style: none;
+      padding: 0;
+    }
+    .leaderboard li {
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
+  <img src="https://i.imgur.com/S5XPTvX.png" class="logo" alt="Titcoin Logo" />
   <h1>🔥 Vote Your Favorite Titcoin Image 🔥</h1>
-  <button class="wallet-btn" onclick="connectWallet()">🔓 Connect Wallet (optional)</button>
+  <div class="leaderboard">
+    <h2>📈 Live Leaderboard</h2>
+    <ol id="leaderboardList"></ol>
+  </div>
   <div class="grid" id="imageGrid"></div>
 
   <script>
-    let walletAddress = null;
-
-    async function connectWallet() {
-      if (window.solana && window.solana.isPhantom) {
-        try {
-          const resp = await window.solana.connect();
-          walletAddress = resp.publicKey.toString();
-          alert('Wallet connected: ' + walletAddress);
-        } catch (err) {
-          console.error('Wallet connection rejected');
-        }
-      } else {
-        alert('Phantom wallet not detected. Install it to use wallet login.');
-      }
-    }
-
     async function fetchImages() {
       const res = await fetch('https://titcoin-voting-app.onrender.com/images');
-      const data = await res.json();
+      let data = await res.json();
+
+      // Force tier spread for small sets
+      if (data.length < 6) {
+        data.sort((a, b) => b.votes - a.votes);
+        data.forEach((img, i) => {
+          if (i === 0) img.tier = 'S';
+          else if (i === 1) img.tier = 'A';
+          else if (i === 2) img.tier = 'B';
+          else if (i === 3) img.tier = 'C';
+          else if (i === 4) img.tier = 'D';
+          else img.tier = 'E';
+        });
+      }
+
+      // Sort images by vote count
+      data.sort((a, b) => b.votes - a.votes);
+
+      // Image grid
       const grid = document.getElementById('imageGrid');
       grid.innerHTML = '';
       data.forEach(img => {
+        const tierClass = `tier tier-${img.tier}`;
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
           <img src="${img.url}" alt="titcoin image" />
-          <div class="tier">Tier: <strong>${img.tier}</strong></div>
+          <div class="${tierClass}">Tier: ${img.tier}</div>
           <div>Votes: ${img.votes}</div>
           <button onclick="vote('${img.id}')">Vote</button>
         `;
         grid.appendChild(card);
+      });
+
+      // Leaderboard
+      const leaderboard = document.getElementById('leaderboardList');
+      leaderboard.innerHTML = '';
+      data.slice(0, 10).forEach(img => {
+        const item = document.createElement('li');
+        item.innerHTML = `<strong>${img.tier}</strong> — ${img.votes} votes`;
+        leaderboard.appendChild(item);
       });
     }
 
