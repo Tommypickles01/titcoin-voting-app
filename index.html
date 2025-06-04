@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: sans-serif;
-      background: #000; /* Sleek black background */
+      background: #000;
       color: #fff;
       margin: 0;
       padding: 0;
@@ -28,6 +28,7 @@
     .tier-section h2 {
       font-size: 2em;
       margin-bottom: 10px;
+      text-shadow: 0 0 10px currentColor;
     }
     .S { color: gold; }
     .A { color: #00ffcc; }
@@ -48,18 +49,20 @@
       text-align: center;
       position: relative;
       transition: all 0.3s ease-in-out;
+      box-shadow: 0 0 8px #222;
     }
     .card:hover {
       transform: scale(1.05) rotate(1deg);
-      background: rgba(40, 40, 40, 1);
+      box-shadow: 0 0 20px #ff6;
     }
-    .card:hover .tier-S {
-      box-shadow: 0 0 15px gold;
+    .card.S:hover {
+      box-shadow: 0 0 25px gold;
     }
     img {
       max-width: 100%;
       border-radius: 8px;
       transition: all 0.3s ease-in-out;
+      cursor: pointer;
     }
     button {
       margin-top: 8px;
@@ -68,6 +71,10 @@
       padding: 6px 12px;
       border-radius: 5px;
       cursor: pointer;
+      font-weight: bold;
+    }
+    .badge {
+      font-size: 1.5em;
     }
     .leaderboard {
       text-align: center;
@@ -126,14 +133,14 @@
 
         const section = document.createElement('div');
         section.className = 'tier-section';
-        section.innerHTML = `<h2 class="${tier}">${tier} Tier</h2><div class="grid"></div>`;
+        section.innerHTML = `<h2 class="${tier}">${tier} Tier ${badge(tier)}</h2><div class="grid"></div>`;
         const grid = section.querySelector('.grid');
 
         tierData.forEach(img => {
           const card = document.createElement('div');
-          card.className = 'card';
+          card.className = `card ${img.tier}`;
           card.innerHTML = `
-            <img src="${img.url}" alt="image" />
+            <img src="${img.url}" alt="image" onclick="zoomImage('${img.url}')" />
             <div>Votes: ${img.votes}</div>
             <button onclick="vote('${img.id}')">Vote</button>
           `;
@@ -152,9 +159,26 @@
       });
     }
 
+    function badge(tier) {
+      switch(tier) {
+        case 'S': return '<span class="badge">👑</span>';
+        case 'A': return '<span class="badge">🥇</span>';
+        case 'B': return '<span class="badge">🥈</span>';
+        case 'C': return '<span class="badge">🥉</span>';
+        case 'D': return '<span class="badge">📉</span>';
+        case 'E': return '<span class="badge">💀</span>';
+        default: return '';
+      }
+    }
+
     async function vote(id) {
       await fetch(`https://titcoin-voting-app.onrender.com/vote/${id}`, { method: 'POST' });
       fetchImages();
+    }
+
+    function zoomImage(url) {
+      const win = window.open('', '_blank');
+      win.document.write(`<img src="${url}" style="width:100%;height:auto;">`);
     }
 
     fetchImages();
