@@ -14,18 +14,11 @@
     button { margin-top: 8px; background: orange; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; }
     .tier { font-size: 1.2em; margin-top: 4px; }
     .wallet-btn { display: block; margin: 10px auto; background: #444; color: #fff; padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; }
-    .uploader { text-align: center; margin: 20px 0; }
-    .uploader input, .uploader button { padding: 8px; border-radius: 5px; border: none; }
-    .uploader input { width: 250px; margin-right: 10px; }
   </style>
 </head>
 <body>
   <h1>🔥 Vote Your Favorite Titcoin Image 🔥</h1>
   <button class="wallet-btn" onclick="connectWallet()">🔓 Connect Wallet (optional)</button>
-  <div class="uploader">
-    <input type="text" id="newImageUrl" placeholder="Paste image URL here">
-    <button onclick="uploadImage()">➕ Add Image</button>
-  </div>
   <div class="grid" id="imageGrid"></div>
 
   <script>
@@ -66,22 +59,6 @@
     async function vote(id) {
       await fetch(`https://titcoin-voting-app.onrender.com/vote/${id}`, { method: 'POST' });
       fetchImages();
-    }
-
-    async function uploadImage() {
-      const url = document.getElementById('newImageUrl').value;
-      if (!url) return alert('Paste an image URL first.');
-      const res = await fetch('https://titcoin-voting-app.onrender.com/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      if (res.ok) {
-        document.getElementById('newImageUrl').value = '';
-        fetchImages();
-      } else {
-        alert('Upload failed.');
-      }
     }
 
     fetchImages();
