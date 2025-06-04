@@ -27,6 +27,7 @@
     <button onclick="uploadImage()">➕ Add Image</button>
   </div>
   <div class="grid" id="imageGrid"></div>
+
   <script>
     let walletAddress = null;
 
@@ -45,7 +46,7 @@
     }
 
     async function fetchImages() {
-      const res = await fetch('http://localhost:3000/images');
+      const res = await fetch('https://titcoin-voting-app.onrender.com/images');
       const data = await res.json();
       const grid = document.getElementById('imageGrid');
       grid.innerHTML = '';
@@ -63,14 +64,14 @@
     }
 
     async function vote(id) {
-      await fetch(`http://localhost:3000/vote/${id}`, { method: 'POST' });
+      await fetch(`https://titcoin-voting-app.onrender.com/vote/${id}`, { method: 'POST' });
       fetchImages();
     }
 
     async function uploadImage() {
       const url = document.getElementById('newImageUrl').value;
       if (!url) return alert('Paste an image URL first.');
-      const res = await fetch('http://localhost:3000/upload', {
+      const res = await fetch('https://titcoin-voting-app.onrender.com/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
