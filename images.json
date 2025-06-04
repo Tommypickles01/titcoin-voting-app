@@ -1,52 +1,7 @@
 [
-  {
-    "id": "img1",
-    "url": "https://files.catbox.moe/ashmgk.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img2",
-    "url": "https://files.catbox.moe/fzvtcd.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img3",
-    "url": "https://files.catbox.moe/88xxmd.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img4",
-    "url": "https://files.catbox.moe/h0hvlq.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img5",
-    "url": "https://files.catbox.moe/a8qa8f.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img6",
-    "url": "https://files.catbox.moe/rlysla.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img7",
-    "url": "https://files.catbox.moe/xz74pl.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img8",
-    "url": "https://files.catbox.moe/rd6y8j.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img9",
-    "url": "https://files.catbox.moe/x44g7j.jpeg",
-    "votes": 0
-  },
-  {
-    "id": "img10",
-    "url": "https://files.catbox.moe/lht0sk.jpeg",
-    "votes": 0
-  }
+  { "id": "img1", "url": "https://files.catbox.moe/ashmgk.jpeg", "votes": 0 },
+  { "id": "img2", "url": "https://files.catbox.moe/fzvtcd.jpeg", "votes": 0 },
+  { "id": "img3", "url": "https://files.catbox.moe/88xxmd.jpeg", "votes": 0 },
+  { "id": "img4", "url": "https://files.catbox.moe/h0hvlq.jpeg", "votes": 0 },
+  { "id": "img5", "url": "https://files.catbox.moe/a8qa8f.jpeg", "votes": 0 }
 ]
